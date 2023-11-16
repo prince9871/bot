@@ -1,46 +1,19 @@
-const qrcode = require('qrcode-terminal')
-const axios = require('axios')
-const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js')
-// This is a self hosted version of the whatsapp web js library,
+const express = require('express');
+const { Client, LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+const app = express();
+
 const client = new Client({
   authStrategy: new LocalAuth()
-})
+});
 
 client.on('qr', qr => {
-  qrcode.generate(qr, { small: true })
-})
+  qrcode.generate(qr, { small: true });
+});
 
 client.on('ready', () => {
-  console.log('Client is ready!')
-})
-
-// client.on('message', async message => {
-//   const content = message.body
-//   if (content.includes('cat')) {
-//     message.react('😹')
-//     return message
-//       .getChat()
-//       .then(chat => chat.sendMessage('I love cat more than you do!'))
-//   } else if (message.body.includes('kitty')) {
-//     message.react('😍')
-//     const media = await MessageMedia.fromUrl(
-//       `https://unsplash.com/photos/gKXKBY-C-Dk/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8Mnx8Y2F0fGVufDB8fHx8MTcwMDA3MTY5NHww&force=true`
-//     )
-//     return message.getChat().then(chat => chat.sendMessage(media))
-//   } else if (content.includes('meme')) {
-//     message.react('😂')
-//     const meme = await axios('https://meme-api.com/gimme').then(res => res.data)
-//     client.sendMessage(message.from, await MessageMedia.fromUrl(meme.url))
-//   } else if (content.includes('joke')) {
-//     const joke = await axios('https://v2.jokeapi.dev/joke/Any?safe-mode').then(
-//       res => res.data
-//     )
-//     const jokeMsg = client.sendMessage(message.from, joke.setup || joke.joke)
-//     if (joke.delivery) client.reply(joke.delivery)
-//   } else {
-//     console.log(`this command isn't exist`)
-//   }
-// })
+  console.log('Client is ready!');
+});
 
 client.on('message', async message => {
   const content = message.body.toLowerCase();
@@ -79,7 +52,6 @@ client.on('message', async message => {
       "Price: $55 💵\n" +
       "--------------------------------------\n"
     );
-    // Implement logic to display details about Product One
   } else if (content === '!2') {
     await message.reply(
       "*Details about Product Two:* ℹ️\n" +
@@ -88,7 +60,6 @@ client.on('message', async message => {
       "Price: $50,000 💰\n" +
       "--------------------------------------\n"
     );
-    // Implement logic to display details about Product Two
   } else if (content === '!3') {
     await message.reply(
       "*Details about Product Three:* ℹ️\n" +
@@ -98,7 +69,6 @@ client.on('message', async message => {
       "Link: [Poco M2 Pro - Flipkart](https://www.flipkart.com/poco-m2-pro-green-greener-64-gb/p/itm795e36b373b6f) 🌐\n" +
       "--------------------------------------\n"
     );
-    // Implement logic to display details about Product Three
   } else if (content.includes('!ok')) {
     await message.react('♥');
     await message.reply(
@@ -109,9 +79,12 @@ client.on('message', async message => {
   }
 });
 
+client.initialize();
 
+app.get('/', (req, res) => {
+  return res.send(`API Running Successfully`);
+});
 
-
-//Thank You !! I'm Happy to Help 😇
-
-client.initialize()
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
